@@ -46,7 +46,7 @@ const limit = data.reduce(
   (accumulator, currentValue) => {
       return (accumulator > currentValue ? accumulator : currentValue);
   }
-);]
+);
 ```
 
 ##### 7. Кластеры зелёные, даже если содержат неисправный объект
@@ -58,7 +58,7 @@ objectManager.clusters.events.add('add', function (e) {
       
    const defective = objects.filter(obj => !obj.isActive);
    
-   if (defective.length) 
+   if (defective.length) {
       objectManager.clusters.setClusterOptions(cluster.id, {
           preset: 'islands#redClusterIcons'
       });
