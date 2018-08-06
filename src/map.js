@@ -21,8 +21,23 @@ export function initMap(ymaps, containerId) {
 
   objectManager.clusters.options.set('preset', 'islands#greenClusterIcons');
 
-  loadList().then(data => {
+  objectManager.clusters.events.add('add', function (e) {
+      const cluster = objectManager.clusters.getById(e.get('objectId')),
+          objects = cluster.properties.geoObjects;
+
+      const defective = objects.filter(obj => !obj.isActive);
+
+      if (defective.length) {
+          objectManager.clusters.setClusterOptions(cluster.id, {
+              preset: 'islands#redClusterIcons'
+          });
+      }
+  });
+
+
+    loadList().then(data => {
     objectManager.add(data);
+    myMap.geoObjects.add(objectManager);
   });
 
   // details
@@ -44,7 +59,7 @@ export function initMap(ymaps, containerId) {
   const listBoxControl = createFilterControl(ymaps);
   myMap.controls.add(listBoxControl);
 
-  var filterMonitor = new ymaps.Monitor(listBoxControl.state);
+  const filterMonitor = new ymaps.Monitor(listBoxControl.state);
   filterMonitor.add('filters', filters => {
     objectManager.setFilter(
       obj => filters[obj.isActive ? 'active' : 'defective']
